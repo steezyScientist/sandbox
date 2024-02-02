@@ -1,9 +1,6 @@
-const char* vertexSource = R"glsl(
-    #version 410 core
-    in vec4 position
-
-    void main()
-    {
-        position = vec4(position.x, position.y, position.z, position.w);
-    }
-)glsl";
+const char* vertexSource = "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "}\0";

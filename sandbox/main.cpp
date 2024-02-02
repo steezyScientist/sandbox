@@ -13,6 +13,9 @@ int windowHeight = 480;
 const char* windowTitle = "sandbox";
 GLFWwindow* window = nullptr;
 
+int  success;
+char infoLog[512];
+
 // Create Vertex Array Object
 // Create Vertex Buffer Object
 GLuint vao;
@@ -23,16 +26,15 @@ GLuint CompileShader(GLuint type, const std::string& source) {
       
     if (type == GL_VERTEX_SHADER) {
         shaderObject = glCreateShader(GL_VERTEX_SHADER);
-        //std::cout << "VERTEX shader compiled" << std::endl;
     }
     else if (type == GL_FRAGMENT_SHADER) {
         shaderObject = glCreateShader(GL_FRAGMENT_SHADER);
-        //std::cout << "FRAGMENT shader compiled" << std::endl;
     }
 
     const char* src = source.c_str();
     glShaderSource(shaderObject, 1, &src, nullptr);
     glCompileShader(shaderObject);
+   
     return shaderObject;
 }
 GLuint CreateShaderProgram(const std::string& vertexshadersource,
@@ -46,6 +48,11 @@ GLuint CreateShaderProgram(const std::string& vertexshadersource,
     glAttachShader(programObject, myVertexShader);
     glAttachShader(programObject, myFragmentShader);
     glLinkProgram(programObject);
+    glGetProgramiv(programObject, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(programObject, 512, NULL, infoLog);
+        std::cout << "Shader program failed" << std::endl;
+    }
     glValidateProgram(programObject);
     return programObject;
 }
@@ -146,7 +153,7 @@ void MainLoop() {
         PreDraw();
         Draw();
 
-        //update
+        //update screen
         glfwPollEvents();
         glfwSwapBuffers(window);;
     }
