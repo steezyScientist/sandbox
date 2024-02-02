@@ -23,11 +23,11 @@ GLuint CompileShader(GLuint type, const std::string& source) {
       
     if (type == GL_VERTEX_SHADER) {
         shaderObject = glCreateShader(GL_VERTEX_SHADER);
-        std::cout << "VERTEX shader compiled" << std::endl;
+        //std::cout << "VERTEX shader compiled" << std::endl;
     }
     else if (type == GL_FRAGMENT_SHADER) {
         shaderObject = glCreateShader(GL_FRAGMENT_SHADER);
-        std::cout << "FRAGMENT shader compiled" << std::endl;
+        //std::cout << "FRAGMENT shader compiled" << std::endl;
     }
 
     const char* src = source.c_str();
@@ -123,7 +123,7 @@ void PreDraw(){
     glDisable(GL_CULL_FACE);
 
     glViewport(0, 0, windowWidth, windowHeight);
-    glClearColor(1.0f, 1.0f, 0.0f, 0.0f);
+    glClearColor(0.74902f, 0.847059f, 0.847059f, 0.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     glUseProgram(GraphicsPipelineProgram);

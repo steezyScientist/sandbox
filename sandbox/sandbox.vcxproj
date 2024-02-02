@@ -139,6 +139,9 @@
     <ClInclude Include="fragment.h" />
     <ClInclude Include="vertex.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="colors.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
