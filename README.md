@@ -2,4 +2,4 @@
 Game engine from scratch, but first a triangle.
 
 ### First texture and rotation
-![](rotatingtexture.gif | width = 512)
+![](rotatingtexture.gif = 512x512 )
