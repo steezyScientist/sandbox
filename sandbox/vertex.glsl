@@ -1,0 +1,13 @@
+const char* vertexSource = "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "layout (location = 1) in vec3 vertexColors;\n"
+    "layout (location = 2) in vec2 aTexCoord;\n"
+    "out vec3 v_vertexColors;\n"
+    "out vec2 TexCoord;\n"
+    "uniform mat4 trans;\n"
+    "void main()\n"
+    "{\n"
+        "v_vertexColors = vertexColors;\n"
+        "TexCoord = aTexCoord;\n"
+        "gl_Position = trans * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "}\0";

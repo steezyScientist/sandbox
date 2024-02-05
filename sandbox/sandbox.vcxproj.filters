@@ -20,10 +20,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="fragment.h">
+    <ClInclude Include="fragment.glsl">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="vertex.h">
+    <ClInclude Include="vertex.glsl">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

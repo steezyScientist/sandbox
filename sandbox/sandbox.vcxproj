@@ -136,8 +136,8 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="fragment.h" />
-    <ClInclude Include="vertex.h" />
+    <ClInclude Include="fragment.glsl" />
+    <ClInclude Include="vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="colors.txt" />
