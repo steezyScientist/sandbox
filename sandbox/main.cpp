@@ -18,6 +18,7 @@
 #include "fragment.glsl"
 
 
+
 //WINDOW SETTINGS
 int windowWidth = 640;
 int windowHeight = 480;
