@@ -26,23 +26,6 @@ GLFWwindow* window = nullptr;
 float gOffset;
 float gRotate;
 
-//PROCESS INPUTS
-void Input() {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GL_TRUE);
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        gOffset += 0.001;
-    }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        gOffset -= 0.001;
-    }
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        gRotate -= 0.5;
-    }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        gRotate += 0.5;
-    }
-}
 
 // Create Vertex Array Object
 // Create Vertex Buffer Object
@@ -53,6 +36,27 @@ GLuint ibo = 0;
 GLuint texture;
 
 ShaderProgram sandbox;
+
+
+//PROCESS INPUTS
+void Input() {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, GL_TRUE);
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+       
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+
+    }
+}
+
 
 void HandleShader() {
     sandbox.setVertexSource("vertex.shader");
@@ -205,6 +209,17 @@ void PreDraw(){
         std::cout << "Could not find u_ModelMatrix\n";
         exit(EXIT_FAILURE);
     }
+
+    //glm::mat4 view = gCamera.GetViewMatrix();
+    //GLuint ViewpMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_View");
+    //if (ViewpMatrixLocation >= 0) {
+    //    glUniformMatrix4fv(ViewpMatrixLocation, 1, GL_FALSE, &view[0][0]);
+    //}
+    //else {
+    //    std::cout << "Could not find u_View\n";
+    //    exit(EXIT_FAILURE);
+    //}
+    
     //projection matrix
     glm::mat4 perspective = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
     GLuint PerspMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_PerspMatrix");

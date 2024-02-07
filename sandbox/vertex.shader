@@ -9,6 +9,8 @@
 
     uniform mat4 u_ModelMatrix;
     uniform mat4 u_PerspMatrix;
+    uniform mat4 u_View;
+    
 
     void main()
     {
