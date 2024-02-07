@@ -26,4 +26,9 @@
     <None Include="vertex.shader" />
     <None Include="fragment.shader" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="shaders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
