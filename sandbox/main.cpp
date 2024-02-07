@@ -14,10 +14,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#include "vertex.glsl"
-#include "fragment.glsl"
-
-
 
 //WINDOW SETTINGS
 int windowWidth = 640;
@@ -126,7 +122,19 @@ GLuint CreateShaderProgram(const std::string& vertexshadersource, const std::str
     return programObject;
 }
 
+std::string LoadShaderString(const std::string& filename) {
+    std::string result = "";
+    std::string line = "";
+    std::ifstream myFile(filename.c_str());
 
+    if (myFile.is_open()) {
+        while (std::getline(myFile, line)){
+            result += line + '\n';
+        }
+        myFile.close();
+    }
+    return result;
+}
 //TEXTURE
 void LoadCreateTexture() {
     
@@ -242,8 +250,8 @@ void VertexSpecification() {
 }
 
 void CreateGraphicsPipeline() {
-    //std::string vertexSource    = LoadShader("vertex.glsl");
-    //std::string fragmentSource  = LoadShader("fragment.glsl");
+    std::string vertexSource    = LoadShaderString("vertex.shader");
+    std::string fragmentSource  = LoadShaderString("fragment.shader");
    
     GraphicsPipelineProgram = CreateShaderProgram(vertexSource, fragmentSource);
 }
