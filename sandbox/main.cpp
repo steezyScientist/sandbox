@@ -6,7 +6,7 @@
 #include <fstream>
 #include <vector>
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtc/type_ptr.hpp>
 #include <chrono>
 
@@ -24,11 +24,26 @@ int windowWidth = 640;
 int windowHeight = 480;
 const char* windowTitle = "sandbox";
 GLFWwindow* window = nullptr;
+ 
+float gOffset;
+float gRotate;
 
 //PROCESS INPUTS
 void Input() {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        gOffset += 0.001;
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        gOffset -= 0.001;
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        gRotate += 0.01;
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        gRotate -= 0.01;
+    }
 }
 
 // Create Vertex Array Object
@@ -233,12 +248,6 @@ void CreateGraphicsPipeline() {
     GraphicsPipelineProgram = CreateShaderProgram(vertexSource, fragmentSource);
 }
 
-void MyTransform() {
-    glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-    GLint uniTrans = glGetUniformLocation(GraphicsPipelineProgram, "trans");
-    glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(trans));
-}
 
 void PreDraw(){
 
@@ -255,6 +264,30 @@ void PreDraw(){
 
     glUseProgram(GraphicsPipelineProgram);
 
+
+
+    //model transformation
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, gOffset));
+    model = glm::rotate(model, glm::radians(gRotate), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    GLuint modelMatrixLocation = glGetUniformLocation(GraphicsPipelineProgram, "u_ModelMatrix");
+    if (modelMatrixLocation >= 0) {
+        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &model[0][0]);
+    }
+    else {
+        std::cout << "Could not find u_ModelMatrix\n";
+        exit(EXIT_FAILURE);
+    }
+    //projection matrix
+    glm::mat4 perspective = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
+    GLuint PerspMatrixLocation = glGetUniformLocation(GraphicsPipelineProgram, "u_PerspMatrix");
+    if (PerspMatrixLocation >= 0) {
+        glUniformMatrix4fv(PerspMatrixLocation, 1, GL_FALSE, &perspective[0][0]);
+    }
+    else {
+        std::cout << "Could not find u_PerspMatrix\n";
+        exit(EXIT_FAILURE);
+    }
 }
 
 void Draw() {
@@ -263,7 +296,6 @@ void Draw() {
 
     //glDrawArrays(GL_TRIANGLES, 0, 6);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    MyTransform();
     glUseProgram(0);
    
     //WIREFRAME MODE
@@ -291,9 +323,13 @@ void CleanUp() {
 
 int main()
 {
+    //setip glfw window
     Initialize();
+    //setup geometry
     VertexSpecification();
+    //load textures
     LoadCreateTexture();
+    //load shaders
     CreateGraphicsPipeline();
     MainLoop();
     CleanUp();
