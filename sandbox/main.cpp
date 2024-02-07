@@ -39,10 +39,10 @@ void Input() {
         gOffset -= 0.001;
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        gRotate += 0.01;
+        gRotate -= 0.5;
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        gRotate -= 0.01;
+        gRotate += 0.5;
     }
 }
 
@@ -267,7 +267,7 @@ void PreDraw(){
 
 
     //model transformation
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, gOffset));
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
     model = glm::rotate(model, glm::radians(gRotate), glm::vec3(0.0f, 1.0f, 0.0f));
 
     GLuint modelMatrixLocation = glGetUniformLocation(GraphicsPipelineProgram, "u_ModelMatrix");
