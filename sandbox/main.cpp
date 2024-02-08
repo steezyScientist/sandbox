@@ -15,6 +15,7 @@
 #include "stb_image.h"
 
 #include "shaderClass.h"
+#include "Camera.hpp"
 
 
 //WINDOW SETTINGS
@@ -22,6 +23,8 @@ int windowWidth = 640;
 int windowHeight = 480;
 const char* windowTitle = "sandbox";
 GLFWwindow* window = nullptr;
+
+bool polyMode = false;
  
 float gOffset;
 float gRotate;
@@ -36,25 +39,59 @@ GLuint ibo = 0;
 GLuint texture;
 
 ShaderProgram sandbox;
+Camera gCamera;
 
+float speed = 0.001;
+float sens = 0.1;
 
 //PROCESS INPUTS
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    std::cout << "x:" << xpos << " y:" << ypos << std::endl;
+    
+    float xPos = xpos * sens;
+    float yPos = ypos * sens;
+
+   gCamera.MouseLook(xPos, yPos);
+}
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
+
+        switch (polyMode) {
+        case (true):
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            polyMode = false;
+            break;
+        case (false):
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            polyMode = true;
+            break;
+        }
+
+    }
+}
+
 void Input() {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
 
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetKeyCallback(window, key_callback);
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        
+        gCamera.MoveForard(speed);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-       
+        gCamera.MoveBackward(speed);
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-
+        gCamera.MoveLeft(speed);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-
+        gCamera.MoveRight(speed);
     }
+    
 }
 
 
@@ -131,11 +168,48 @@ void Initialize() {
 
 void VertexSpecification() {
     const std::vector<GLfloat> vertexData{
-        // positions          // colors           // texture coords
-             0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   2.0f, 2.0f,   // top right
-             0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   2.0f, 0.0f,   // bottom right
-            -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-            -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 2.0f    // top left
+        // positions      // texture coords
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
 
@@ -165,13 +239,11 @@ void VertexSpecification() {
 
     //vertex point information
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*8, (void*)0);
-    //color point information
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 8, (GLvoid*)(sizeof(GL_FLOAT) * 3));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*5, (void*)0);
     //texture
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 8, (GLvoid*)(sizeof(GL_FLOAT) * 6));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (GLvoid*)(sizeof(GL_FLOAT) * 3));
+
 
 
     glBindVertexArray(0);
@@ -181,13 +253,12 @@ void VertexSpecification() {
 
 void PreDraw(){
 
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
-
     glViewport(0, 0, windowWidth, windowHeight);
     //background color
     glClearColor(0.74902f, 0.847059f, 0.847059f, 0.0f);
+    glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
 
     // bind Texture
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -199,7 +270,7 @@ void PreDraw(){
 
     //model transformation
     glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
-    model = glm::rotate(model, glm::radians(gRotate), glm::vec3(0.0f, 1.0f, 0.0f));
+    //model = glm::rotate(model, glm::radians(gRotate), glm::vec3(0.0f, 1.0f, 0.0f));
 
     GLuint modelMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_ModelMatrix");
     if (modelMatrixLocation >= 0) {
@@ -210,15 +281,15 @@ void PreDraw(){
         exit(EXIT_FAILURE);
     }
 
-    //glm::mat4 view = gCamera.GetViewMatrix();
-    //GLuint ViewpMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_View");
-    //if (ViewpMatrixLocation >= 0) {
-    //    glUniformMatrix4fv(ViewpMatrixLocation, 1, GL_FALSE, &view[0][0]);
-    //}
-    //else {
-    //    std::cout << "Could not find u_View\n";
-    //    exit(EXIT_FAILURE);
-    //}
+    glm::mat4 view = gCamera.GetViewMatrix();
+    GLuint ViewpMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_View");
+    if (ViewpMatrixLocation >= 0) {
+        glUniformMatrix4fv(ViewpMatrixLocation, 1, GL_FALSE, &view[0][0]);
+    }
+    else {
+        std::cout << "Could not find u_View\n";
+        exit(EXIT_FAILURE);
+    }
     
     //projection matrix
     glm::mat4 perspective = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
@@ -235,9 +306,10 @@ void PreDraw(){
 void Draw() {
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-    //glDrawArrays(GL_TRIANGLES, 0, 6);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+      
+     glDrawArrays(GL_TRIANGLES, 0, 36);
+  
+   // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
     glUseProgram(0);
    
     //WIREFRAME MODE
