@@ -38,6 +38,14 @@ GLuint vbo = 0;
 GLuint ibo = 0;
 GLuint texture;
 
+//model GLuint
+glm::mat4 model = glm::mat4(1.f);
+glm::mat4 view = glm::mat4(1.f);
+glm::mat4 perspective = glm::mat4(1.f);
+GLuint ModelMatrixLocation;
+GLuint ViewMatrixLocation;
+GLuint PerspMatrixLocation;
+
 ShaderProgram sandbox;
 Camera gCamera;
 
@@ -216,7 +224,7 @@ void VertexSpecification() {
     //generate VAO
     //bind to VAO
     glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    glBindVertexArray(vao);    
     //generate VBO
     //bind to VBO
     //populate the buffer
@@ -259,32 +267,29 @@ void PreDraw(){
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-
     // bind Texture
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    //glUseProgram(GraphicsPipelineProgram);
+
     sandbox.use();
-
-
+    //CAMERA AND WORLD MATRIX
 
     //model transformation
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
-    //model = glm::rotate(model, glm::radians(gRotate), glm::vec3(0.0f, 1.0f, 0.0f));
 
-    GLuint modelMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_ModelMatrix");
-    if (modelMatrixLocation >= 0) {
-        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &model[0][0]);
+    ModelMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_ModelMatrix");
+    if (ModelMatrixLocation >= 0) {
+        glUniformMatrix4fv(ModelMatrixLocation, 1, GL_FALSE, &model[0][0]);
     }
     else {
         std::cout << "Could not find u_ModelMatrix\n";
         exit(EXIT_FAILURE);
     }
 
-    glm::mat4 view = gCamera.GetViewMatrix();
-    GLuint ViewpMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_View");
-    if (ViewpMatrixLocation >= 0) {
-        glUniformMatrix4fv(ViewpMatrixLocation, 1, GL_FALSE, &view[0][0]);
+
+    view = gCamera.GetViewMatrix();
+    ViewMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_View");
+    if (ViewMatrixLocation >= 0) {
+        glUniformMatrix4fv(ViewMatrixLocation, 1, GL_FALSE, &view[0][0]);
     }
     else {
         std::cout << "Could not find u_View\n";
@@ -292,8 +297,8 @@ void PreDraw(){
     }
     
     //projection matrix
-    glm::mat4 perspective = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
-    GLuint PerspMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_PerspMatrix");
+    perspective = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
+    PerspMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_PerspMatrix");
     if (PerspMatrixLocation >= 0) {
         glUniformMatrix4fv(PerspMatrixLocation, 1, GL_FALSE, &perspective[0][0]);
     }
@@ -304,12 +309,36 @@ void PreDraw(){
 }
 
 void Draw() {
+    //glUseProgram(GraphicsPipelineProgram);
+    
+
+
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-      
-     glDrawArrays(GL_TRIANGLES, 0, 36);
-  
-   // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+     
+    //draw 3 cubes, middle is spinning on y
+    for (unsigned int i = 0; i < 3; i++) {
+        model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f + i, 0.2f, -2.0f));
+        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+
+        if (i == 1) {
+            model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 0.2f, 0.0f));
+        }
+
+        ModelMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_ModelMatrix");
+        if (ModelMatrixLocation >= 0) {
+            glUniformMatrix4fv(ModelMatrixLocation, 1, GL_FALSE, &model[0][0]);
+        }
+        else {
+            std::cout << "Could not find u_ModelMatrix\n";
+            exit(EXIT_FAILURE);
+        }
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+
+
+     
+     // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
     glUseProgram(0);
    
     //WIREFRAME MODE
