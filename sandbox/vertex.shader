@@ -12,7 +12,6 @@
 
     void main()
     {
-        TexCoord = aTexCoord;
         vec4 newPosition = u_PerspMatrix * u_View *  u_ModelMatrix * vec4(position, 1.f);
         gl_Position = newPosition;
     };

@@ -25,7 +25,7 @@ const char* windowTitle = "sandbox";
 GLFWwindow* window = nullptr;
 
 bool polyMode = false;
- 
+
 float gOffset;
 float gRotate;
 
@@ -33,6 +33,7 @@ float gRotate;
 // Create Vertex Array Object
 // Create Vertex Buffer Object
 GLuint vao = 0;
+GLuint lightVao = 0;
 GLuint vbo = 0;
 //Create index buffer object
 GLuint ibo = 0;
@@ -47,6 +48,7 @@ GLuint ViewMatrixLocation;
 GLuint PerspMatrixLocation;
 
 ShaderProgram sandbox;
+ShaderProgram lightbox;
 Camera gCamera;
 
 float speed = 0.001;
@@ -55,11 +57,11 @@ float sens = 0.1;
 //PROCESS INPUTS
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     std::cout << "x:" << xpos << " y:" << ypos << std::endl;
-    
+
     float xPos = xpos * sens;
     float yPos = ypos * sens;
 
-   gCamera.MouseLook(xPos, yPos);
+    gCamera.MouseLook(xPos, yPos);
 }
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -99,7 +101,7 @@ void Input() {
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         gCamera.MoveRight(speed);
     }
-    
+
 }
 
 
@@ -107,11 +109,15 @@ void HandleShader() {
     sandbox.setVertexSource("vertex.shader");
     sandbox.setFragSource("fragment.shader");
     sandbox.runShaderProgram();
+    lightbox.setVertexSource("vertex.shader");
+    lightbox.setFragSource("color.fragment");
+    lightbox.runShaderProgram();
+
 }
 
 //TEXTURE
 void LoadCreateTexture() {
-    
+
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
     // set the texture wrapping parameters
@@ -139,9 +145,9 @@ void LoadCreateTexture() {
 
 void GetOpenGLVersionInfo() {
     std::cout << "Vendor: " << glGetString(GL_VENDOR) << std::endl;
-    std::cout << "Renderer: " << glGetString(GL_RENDERER)<< std::endl;
-    std::cout << "Version: " << glGetString(GL_VERSION)<< std::endl;
-    std::cout << "Shading Language: "<< glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+    std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
+    std::cout << "Version: " << glGetString(GL_VERSION) << std::endl;
+    std::cout << "Shading Language: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 }
 
 void Initialize() {
@@ -150,7 +156,7 @@ void Initialize() {
     {
         std::cout << "Failed to initialize" << std::endl;
     }
-    
+
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
@@ -159,81 +165,90 @@ void Initialize() {
 
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-   window = glfwCreateWindow(windowWidth, windowHeight, windowTitle, nullptr, nullptr);
-   if (!window)
-   {
-       std::cout << "Failed to create window" << std::endl;
-   }
-   glfwMakeContextCurrent(window);
- 
-   glewExperimental = GL_TRUE;
-   glewInit();
+    window = glfwCreateWindow(windowWidth, windowHeight, windowTitle, nullptr, nullptr);
+    if (!window)
+    {
+        std::cout << "Failed to create window" << std::endl;
+    }
+    glfwMakeContextCurrent(window);
+
+    glewExperimental = GL_TRUE;
+    glewInit();
 
 
-   GetOpenGLVersionInfo();
+    GetOpenGLVersionInfo();
 
 }
 
 void VertexSpecification() {
     const std::vector<GLfloat> vertexData{
         // positions      // texture coords
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
 
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f, -0.5f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+        -0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f, -0.5f,
     };
 
 
     //generate VAO
     //bind to VAO
     glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);    
+    glBindVertexArray(vao);
     //generate VBO
     //bind to VBO
     //populate the buffer
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER,
-                vertexData.size() * sizeof(GLfloat),
-                vertexData.data(),
-                GL_STATIC_DRAW);
+        vertexData.size() * sizeof(GLfloat),
+        vertexData.data(),
+        GL_STATIC_DRAW);
+    //vertex point information
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 3, (void*)0);
+
+    glGenVertexArrays(1, &lightVao);
+    glBindVertexArray(lightVao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 3, (void*)0);
 
 
     const std::vector<GLuint> indexBufferData{ 0, 1, 3, 1, 2, 3 };
@@ -241,16 +256,15 @@ void VertexSpecification() {
     glGenBuffers(1, &ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                indexBufferData.size() * sizeof(GLuint),
-                indexBufferData.data(),
-                GL_STATIC_DRAW);
+        indexBufferData.size() * sizeof(GLuint),
+        indexBufferData.data(),
+        GL_STATIC_DRAW);
 
-    //vertex point information
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*5, (void*)0);
+
     //texture
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (GLvoid*)(sizeof(GL_FLOAT) * 3));
+    //glEnableVertexAttribArray(1);
+    //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 5, (GLvoid*)(sizeof(GL_FLOAT) * 3));
+
 
 
 
@@ -259,7 +273,7 @@ void VertexSpecification() {
 }
 
 
-void PreDraw(){
+void PreDraw() {
 
     glViewport(0, 0, windowWidth, windowHeight);
     //background color
@@ -268,79 +282,53 @@ void PreDraw(){
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     // bind Texture
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-
-    sandbox.use();
-    //CAMERA AND WORLD MATRIX
-
-    //model transformation
-
-    ModelMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_ModelMatrix");
-    if (ModelMatrixLocation >= 0) {
-        glUniformMatrix4fv(ModelMatrixLocation, 1, GL_FALSE, &model[0][0]);
-    }
-    else {
-        std::cout << "Could not find u_ModelMatrix\n";
-        exit(EXIT_FAILURE);
-    }
-
-
-    view = gCamera.GetViewMatrix();
-    ViewMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_View");
-    if (ViewMatrixLocation >= 0) {
-        glUniformMatrix4fv(ViewMatrixLocation, 1, GL_FALSE, &view[0][0]);
-    }
-    else {
-        std::cout << "Could not find u_View\n";
-        exit(EXIT_FAILURE);
-    }
-    
-    //projection matrix
-    perspective = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
-    PerspMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_PerspMatrix");
-    if (PerspMatrixLocation >= 0) {
-        glUniformMatrix4fv(PerspMatrixLocation, 1, GL_FALSE, &perspective[0][0]);
-    }
-    else {
-        std::cout << "Could not find u_PerspMatrix\n";
-        exit(EXIT_FAILURE);
-    }
+    //glBindTexture(GL_TEXTURE_2D, texture);
 }
+
 
 void Draw() {
     //glUseProgram(GraphicsPipelineProgram);
-    
+
+    sandbox.use();
+    //CAMERA AND WORLD MATRIX
+    sandbox.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+    sandbox.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+    //model transformation
+    model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.2f, -2.0f));
+    model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+    //model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+    sandbox.setMat4("u_ModelMatrix", model);
+
+    view = gCamera.GetViewMatrix();
+    sandbox.setMat4("u_View", view);
+
+    //projection matrix
+    perspective = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
+    sandbox.setMat4("u_PerspMatrix", perspective);
 
 
     glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-     
-    //draw 3 cubes, middle is spinning on y
-    for (unsigned int i = 0; i < 3; i++) {
-        model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f + i, 0.2f, -2.0f));
-        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+  
 
-        if (i == 1) {
-            model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 0.2f, 0.0f));
-        }
+    lightbox.use();
+    lightbox.setMat4("u_PerspMatrix", perspective);
+    lightbox.setMat4("u_View", view);
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(.5f, 0.5f, -2.0f));
+    model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+    //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f));
+    lightbox.setMat4("u_ModelMatrix", model);
 
-        ModelMatrixLocation = glGetUniformLocation(sandbox.cShaderProgram, "u_ModelMatrix");
-        if (ModelMatrixLocation >= 0) {
-            glUniformMatrix4fv(ModelMatrixLocation, 1, GL_FALSE, &model[0][0]);
-        }
-        else {
-            std::cout << "Could not find u_ModelMatrix\n";
-            exit(EXIT_FAILURE);
-        }
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
+    glBindVertexArray(lightVao);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
-     
-     // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+
+    // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
     glUseProgram(0);
-   
+
     //WIREFRAME MODE
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
@@ -348,7 +336,7 @@ void Draw() {
 void MainLoop() {
     while (!glfwWindowShouldClose(window))
     {
-        
+
         Input();
         PreDraw();
         Draw();
