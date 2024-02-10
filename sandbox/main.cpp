@@ -255,14 +255,14 @@ void VertexSpecification() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*)0);
 
 
-    const std::vector<GLuint> indexBufferData{ 0, 1, 3, 1, 2, 3 };
-    //Index buffer object
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-        indexBufferData.size() * sizeof(GLuint),
-        indexBufferData.data(),
-        GL_STATIC_DRAW);
+    //const std::vector<GLuint> indexBufferData{ 0, 1, 3, 1, 2, 3 };
+    ////Index buffer object
+    //glGenBuffers(1, &ibo);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+    //    indexBufferData.size() * sizeof(GLuint),
+    //    indexBufferData.data(),
+    //    GL_STATIC_DRAW);
 
 
     //texture
@@ -300,13 +300,6 @@ void Draw() {
     sandbox.setVec3("lightPos", lightPos);
     sandbox.setVec3("viewPos", gCamera.getPosition());
 
-    //model transformation
-    model = glm::mat4(1.0f);
-    model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.2f, -2.0f));
-    model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-    //model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
-    sandbox.setMat4("u_ModelMatrix", model);
-
     view = gCamera.GetViewMatrix();
     sandbox.setMat4("u_View", view);
 
@@ -314,13 +307,18 @@ void Draw() {
     perspective = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
     sandbox.setMat4("u_PerspMatrix", perspective);
 
+    //model transformation
+    model = glm::mat4(1.0f);
+    model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.2f, -2.0f));
+    model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
+    //model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+    sandbox.setMat4("u_ModelMatrix", model);
 
     glBindVertexArray(vao);
     glDrawArrays(GL_TRIANGLES, 0, 36);
   
 
     lightbox.use();
-    lightbox.setVec3("lightPos", lightPos);
     lightbox.setMat4("u_PerspMatrix", perspective);
     lightbox.setMat4("u_View", view);
     model = glm::mat4(1.f);
