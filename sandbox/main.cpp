@@ -41,11 +41,12 @@ GLuint texture;
 
 //model GLuint
 glm::mat4 model = glm::mat4(1.f);
+glm::mat4 model2 = glm::mat4(1.f);
 glm::mat4 view = glm::mat4(1.f);
 glm::mat4 perspective = glm::mat4(1.f);
-GLuint ModelMatrixLocation;
-GLuint ViewMatrixLocation;
-GLuint PerspMatrixLocation;
+
+//lighting
+glm::vec3 lightPos(.6f, 0.2f, -2.0f);
 
 ShaderProgram sandbox;
 ShaderProgram lightbox;
@@ -109,8 +110,8 @@ void HandleShader() {
     sandbox.setVertexSource("vertex.shader");
     sandbox.setFragSource("fragment.shader");
     sandbox.runShaderProgram();
-    lightbox.setVertexSource("vertex.shader");
-    lightbox.setFragSource("color.fragment");
+    lightbox.setVertexSource("colorV.shader");
+    lightbox.setFragSource("colorF.shader");
     lightbox.runShaderProgram();
 
 }
@@ -183,47 +184,47 @@ void Initialize() {
 void VertexSpecification() {
     const std::vector<GLfloat> vertexData{
         // positions      // texture coords
-        -0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-        -0.5f, -0.5f,  0.5f,
-         0.5f, -0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
 
-        -0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-         0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-        -0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f, -0.5f,
-         0.5f, -0.5f,  0.5f,
-         0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-        -0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f, -0.5f,
-         0.5f,  0.5f,  0.5f,
-         0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f, -0.5f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
 
 
@@ -242,13 +243,16 @@ void VertexSpecification() {
         GL_STATIC_DRAW);
     //vertex point information
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 3, (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*)0);    
+    //normal
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*)3);
 
     glGenVertexArrays(1, &lightVao);
     glBindVertexArray(lightVao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 3, (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*)0);
 
 
     const std::vector<GLuint> indexBufferData{ 0, 1, 3, 1, 2, 3 };
@@ -293,7 +297,11 @@ void Draw() {
     //CAMERA AND WORLD MATRIX
     sandbox.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
     sandbox.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+    sandbox.setVec3("lightPos", lightPos);
+    sandbox.setVec3("viewPos", gCamera.getPosition());
+
     //model transformation
+    model = glm::mat4(1.0f);
     model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.2f, -2.0f));
     model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
     //model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -312,11 +320,12 @@ void Draw() {
   
 
     lightbox.use();
+    lightbox.setVec3("lightPos", lightPos);
     lightbox.setMat4("u_PerspMatrix", perspective);
     lightbox.setMat4("u_View", view);
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(.5f, 0.5f, -2.0f));
-    model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+    model = glm::mat4(1.f);
+    model = glm::translate(model, lightPos);
+    model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
     //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f));
     lightbox.setMat4("u_ModelMatrix", model);
 

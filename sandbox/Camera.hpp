@@ -14,6 +14,8 @@ public:
 	glm::mat4 GetViewMatrix() const;
 	glm::vec2 OldMousePosition;
 
+	glm::vec3 getPosition();
+
 	void MouseLook(double mouseX, double mouseY);
 	void MoveForard(float speed);
 	void MoveBackward(float speed);

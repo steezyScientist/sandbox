@@ -10,6 +10,10 @@ glm::mat4 Camera::GetViewMatrix() const {
 	return glm::lookAt(mEye, mEye + mViewDirection, mUpVector);
 }
 
+glm::vec3 Camera::getPosition(){
+	return mEye;
+}
+
 void Camera::MouseLook(double mouseX, double mouseY) {
 
 
