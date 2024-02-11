@@ -300,17 +300,14 @@ void Draw() {
     sandbox.setVec3("lightPos", lightPos);
     sandbox.setVec3("viewPos", gCamera.getPosition());
 
-    view = gCamera.GetViewMatrix();
-    sandbox.setMat4("u_View", view);
-
     //projection matrix
     perspective = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
     sandbox.setMat4("u_PerspMatrix", perspective);
+    view = gCamera.GetViewMatrix();
+    sandbox.setMat4("u_View", view);
 
     //model transformation
     model = glm::mat4(1.0f);
-    model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.2f, -2.0f));
-    model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
     //model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
     sandbox.setMat4("u_ModelMatrix", model);
 
