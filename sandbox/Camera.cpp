@@ -1,7 +1,7 @@
 #include "Camera.hpp"
 
 Camera::Camera() {
-	mEye = glm::vec3(0.0f, 0.0f, 0.0f);
+	mEye = glm::vec3(0.0f, 0.0f, 3.0f); //starts behind on Z
 	mViewDirection = glm::vec3(0.0f, 0.0f, -3.0f);
 	mUpVector = glm::vec3(0.0f, 1.0f, 0.0f);
 }

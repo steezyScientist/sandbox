@@ -28,6 +28,8 @@ bool polyMode = false;
 
 float gOffset;
 float gRotate;
+float velocity = 15.0f;
+float angle;
 
 
 // Create Vertex Array Object
@@ -47,6 +49,7 @@ glm::mat4 perspective = glm::mat4(1.f);
 
 //lighting
 glm::vec3 lightPos(.6f, 0.2f, -2.0f);
+glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 
 ShaderProgram sandbox;
 ShaderProgram lightbox;
@@ -183,7 +186,7 @@ void Initialize() {
 
 void VertexSpecification() {
     const std::vector<GLfloat> vertexData{
-        // positions      // texture coords
+        // positions             // normal coords
         -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
          0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
          0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
@@ -246,7 +249,7 @@ void VertexSpecification() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*)0);    
     //normal
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*)3);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6, (void*)(3 * sizeof(float)));
 
     glGenVertexArrays(1, &lightVao);
     glBindVertexArray(lightVao);
@@ -293,13 +296,15 @@ void PreDraw() {
 void Draw() {
     //glUseProgram(GraphicsPipelineProgram);
 
+    glm::vec3 objectColor(1.0f, 1.0f, 0.0f);
+    //lightPos.x = 2.f * sinf(glm::radians(angle));
+
     sandbox.use();
     //CAMERA AND WORLD MATRIX
-    sandbox.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-    sandbox.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+    sandbox.setVec3("lightColor", lightColor);
     sandbox.setVec3("lightPos", lightPos);
+    sandbox.setVec3("objectColor", objectColor);
     sandbox.setVec3("viewPos", gCamera.getPosition());
-
     //projection matrix
     perspective = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
     sandbox.setMat4("u_PerspMatrix", perspective);
@@ -316,17 +321,18 @@ void Draw() {
   
 
     lightbox.use();
+    lightbox.setVec3("lightColor", lightColor);
     lightbox.setMat4("u_PerspMatrix", perspective);
     lightbox.setMat4("u_View", view);
     model = glm::mat4(1.f);
     model = glm::translate(model, lightPos);
-    model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-    //model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f));
+    model = glm::scale(model, glm::vec3(0.5f));
     lightbox.setMat4("u_ModelMatrix", model);
 
     glBindVertexArray(lightVao);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
+   
 
 
 
