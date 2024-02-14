@@ -140,13 +140,13 @@
     <Text Include="colors.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="colorF.shader" />
-    <None Include="colorV.shader" />
     <None Include="fragment.shader" />
     <None Include="vertex.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="Shader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

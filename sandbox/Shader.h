@@ -29,7 +29,7 @@ public:
     }
 
 	void use() {
-		glUseProgram(cShaderProgram);
+		glUseProgram(this->cShaderProgram);
 	}
 
     void setVec3(const std::string& name, float x, float y, float z) const
