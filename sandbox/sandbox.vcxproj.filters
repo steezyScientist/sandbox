@@ -32,7 +32,7 @@
     <None Include="colorV.shader" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="shaderClass.h">
+    <ClInclude Include="Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Camera.hpp">
