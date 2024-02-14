@@ -13,6 +13,7 @@
 
 #include "Camera.hpp"
 #include "Model.h"
+#include "Line.hpp"
 
 
 
@@ -120,67 +121,71 @@ void Initialize() {
 
 }
 
-ShaderProgram shader;
-
-void SetupCompileShader() {
-    //setup compile shader
-    shader.setVertexSource("vertex.shader");
-    shader.setFragSource("fragment.shader");
-
-    shader.runShaderProgram();
-
-}
-
-void PreDraw() {
-
-    glViewport(0, 0, windowWidth, windowHeight);
-    //background color
-    glClearColor(1.0f, 1.0f, 0.0f, 0.0f);
-    glEnable(GL_DEPTH_TEST);
-    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+ShaderProgram lineShader;
+GLuint VBO, VAO;
 
 
+void DrawAxis(glm::vec3 origin, glm::vec3 endpoint) {
 
-    // bind Texture
-    //glBindTexture(GL_TEXTURE_2D, texture);
-}
+    glm::vec3 lineOrigin;
+    glm::vec3 lineEnd;
+    glm::mat4 ModelViewProjection;
+    glm::vec3 lineColor;
+    
+    lineOrigin = origin;
+    lineEnd = endpoint;
+    lineColor = glm::vec3(1.0f);
+    ModelViewProjection = glm::mat4(1.0f);
 
+    lineShader.loadShader("line.vertex", "line.frag");
 
-void Draw() {
+    float vertices[] = {
+        origin.x, origin.y, origin.z,
+        endpoint.x, endpoint.y, endpoint.z,
+    };
 
-    Model ourModel("models/YellowCube_Geo_LOW.obj");
-    shader.use();
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
 
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
-    shader.setMat4("projection", projection);
-    glm::mat4 view = gCamera.GetViewMatrix();
-    shader.setMat4("view", view);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    //draw the loaded model
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.0f));
-    model = glm::scale(model, glm::vec3(0.5f));
-    shader.setMat4("model", model);
-
-    ourModel.Draw(shader);
-
-  
-    // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-    glUseProgram(0);
-
-    //WIREFRAME MODE
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 }
 
 void MainLoop() {
+
     while (!glfwWindowShouldClose(window))
     {
 
         Input();
-        PreDraw();
-        Draw();
 
-        //update screen
+        //////PRE-DRAW
+        glViewport(0, 0, windowWidth, windowHeight);
+        //background color
+        glClearColor(1.0f, 1.0f, 0.0f, 0.0f);
+        glEnable(GL_DEPTH_TEST);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+        ///////DRAW
+        lineShader.use();
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
+        lineShader.setMat4("projection", projection);
+        glm::mat4 view = gCamera.GetViewMatrix();
+        lineShader.setMat4("view", view);
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+        lineShader.setMat4("model", model);
+
+        glBindVertexArray(VAO);
+	    glDrawArrays(GL_LINES, 0, 2);
+    
+
+        glUseProgram(0);
+
+        ////////UPDATE SCREEN
         glfwPollEvents();
         glfwSwapBuffers(window);;
     }
@@ -195,7 +200,7 @@ int main()
 {
     
     Initialize();           //setip glfw window
-    SetupCompileShader();
+    DrawAxis(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     MainLoop();
     CleanUp();
     return 0;

@@ -29,6 +29,9 @@ class Model {
 public:
 	//functions
 	//constructor, filepath to 3D model
+	vector<Mesh> meshes;
+	string directory;
+	vector<Texture> textures_loaded;
 
 	Model(const GLchar* path) {
 		this->loadModel(path);
@@ -45,9 +48,7 @@ public:
 	}
 
 private:
-	vector<Mesh> meshes;
-	string directory;
-	vector<Texture> textures_loaded;
+
 	
 	//load the model with assimp
 	void loadModel(string path) {

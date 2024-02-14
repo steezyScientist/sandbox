@@ -10,22 +10,11 @@ class ShaderProgram
 public:
 	GLuint cShaderProgram = 0;
 
-    std::string vSource;
-    std::string fSource;
-
-    void runShaderProgram() {
-        
+    void loadShader(const std::string& vSource, const std::string& fSource) {
         std::string vertexSource = LoadShaderString(vSource);
         std::string fragmentSource = LoadShaderString(fSource);
 
-        this -> cShaderProgram = CreateShaderProgram(vertexSource, fragmentSource);
-    }
-
-    void setVertexSource(const std::string& filename) {
-        this->vSource = filename;
-    }
-    void setFragSource(const std::string& filename) {
-        this->fSource = filename;
+        this->cShaderProgram = CreateShaderProgram(vertexSource, fragmentSource);
     }
 
 	void use() {
