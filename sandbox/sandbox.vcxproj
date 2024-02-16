@@ -141,17 +141,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.shader" />
-    <None Include="line.frag" />
-    <None Include="line.vertex" />
     <None Include="vertex.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.hpp" />
-    <ClInclude Include="Line.cpp" />
-    <ClInclude Include="Line.hpp" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Test.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -33,11 +33,15 @@ public:
 	string directory;
 	vector<Texture> textures_loaded;
 
+	Model() {
+
+	}
+	
 	Model(const GLchar* path) {
 		this->loadModel(path);
 	}
 	//draw the model
-	void Draw(ShaderProgram shader) {
+	void Draw(Shader shader) {
 		for (GLuint i = 0; i < this->meshes.size(); i++) {
 			this->meshes[i].Draw(shader);
 		}

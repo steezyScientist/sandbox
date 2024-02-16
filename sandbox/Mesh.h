@@ -45,7 +45,7 @@ public:
 		this->setupMesh();
 	}
 
-	void Draw(ShaderProgram shader) {
+	void Draw(Shader shader) {
 		//bind textures
 		GLuint diffuseNr = 1;
 		GLuint specularNr = 1;
@@ -63,19 +63,20 @@ public:
 				ss << specularNr++;
 			}
 			number = ss.str();
-			glUniform1i(glGetUniformLocation(shader.cShaderProgram, (name + number).c_str()), i);
+			glUniform1i(glGetUniformLocation(shader.Program, (name + number).c_str()), i);
 			glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
-		
-			//draw mesh
-			glBindVertexArray(this->VAO);
-			glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
-			glBindVertexArray(0);
+		}
+		glUniform1f(glGetUniformLocation(shader.Program, "material.shininess"), 16.0f);
 
-			//set back to default vvalues for clean up
-			for (GLuint i = 0; i < this->textures.size(); i++) {
-				glActiveTexture(GL_TEXTURE0 + i);
-				glBindTexture(GL_TEXTURE_2D, 0);
-			}
+		//draw mesh
+		glBindVertexArray(this->VAO);
+		glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+
+		//set back to default vvalues for clean up
+		for (GLuint i = 0; i < this->textures.size(); i++) {
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
 

@@ -10,10 +10,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <chrono>
 
-
+#include "Shader.h"
 #include "Camera.hpp"
 #include "Model.h"
-#include "Line.hpp"
 
 
 
@@ -25,10 +24,8 @@ GLFWwindow* window = nullptr;
 
 bool polyMode = false;
 
-float gOffset;
-float gRotate;
-
 Camera gCamera;
+
 
 float speed = 0.001;
 float sens = 0.1;
@@ -121,41 +118,12 @@ void Initialize() {
 
 }
 
-ShaderProgram lineShader;
-GLuint VBO, VAO;
-
-
-void DrawAxis(glm::vec3 origin, glm::vec3 endpoint) {
-
-    glm::vec3 lineOrigin;
-    glm::vec3 lineEnd;
-    glm::mat4 ModelViewProjection;
-    glm::vec3 lineColor;
-    
-    lineOrigin = origin;
-    lineEnd = endpoint;
-    lineColor = glm::vec3(1.0f);
-    ModelViewProjection = glm::mat4(1.0f);
-
-    lineShader.loadShader("line.vertex", "line.frag");
-
-    float vertices[] = {
-        origin.x, origin.y, origin.z,
-        endpoint.x, endpoint.y, endpoint.z,
-    };
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-}
-
 void MainLoop() {
+
+    Shader shader("vertex.shader", "fragment.shader");;
+    Model myModel("models\\Volleyball_ball.obj");
+
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
 
     while (!glfwWindowShouldClose(window))
     {
@@ -165,25 +133,25 @@ void MainLoop() {
         //////PRE-DRAW
         glViewport(0, 0, windowWidth, windowHeight);
         //background color
-        glClearColor(1.0f, 1.0f, 0.0f, 0.0f);
+        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
         glEnable(GL_DEPTH_TEST);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         ///////DRAW
-        lineShader.use();
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
-        lineShader.setMat4("projection", projection);
+        //use shader
+        //draw transformations
+        shader.Use();
+        shader.setMat4("projection", projection);
         glm::mat4 view = gCamera.GetViewMatrix();
-        lineShader.setMat4("view", view);
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-        lineShader.setMat4("model", model);
+        shader.setMat4("view", view);
+        glm::mat4 model;
+        model = glm::translate(model, glm::vec3(0.0f, -0.5f, 0.0f));
+        model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+        shader.setMat4("model", model);
 
-        glBindVertexArray(VAO);
-	    glDrawArrays(GL_LINES, 0, 2);
-    
+        myModel.Draw(shader);
 
-        glUseProgram(0);
+        //glUseProgram(0);
 
         ////////UPDATE SCREEN
         glfwPollEvents();
@@ -200,7 +168,6 @@ int main()
 {
     
     Initialize();           //setip glfw window
-    DrawAxis(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     MainLoop();
     CleanUp();
     return 0;
