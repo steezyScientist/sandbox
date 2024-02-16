@@ -121,7 +121,7 @@ void Initialize() {
 void MainLoop() {
 
     Shader shader("vertex.shader", "fragment.shader");;
-    Model myModel("models\\Volleyball_ball.obj");
+    Model myModel("models/nanosuit.obj");
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
 
@@ -133,7 +133,7 @@ void MainLoop() {
         //////PRE-DRAW
         glViewport(0, 0, windowWidth, windowHeight);
         //background color
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.91f, 0.76f, 0.65f, 0.0f);
         glEnable(GL_DEPTH_TEST);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
@@ -144,12 +144,14 @@ void MainLoop() {
         shader.setMat4("projection", projection);
         glm::mat4 view = gCamera.GetViewMatrix();
         shader.setMat4("view", view);
-        glm::mat4 model;
-        model = glm::translate(model, glm::vec3(0.0f, -0.5f, 0.0f));
-        model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
+        //model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
         shader.setMat4("model", model);
-
         myModel.Draw(shader);
+
+
 
         //glUseProgram(0);
 

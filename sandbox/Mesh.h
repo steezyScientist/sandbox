@@ -66,6 +66,7 @@ public:
 			glUniform1i(glGetUniformLocation(shader.Program, (name + number).c_str()), i);
 			glBindTexture(GL_TEXTURE_2D, this->textures[i].id);
 		}
+
 		glUniform1f(glGetUniformLocation(shader.Program, "material.shininess"), 16.0f);
 
 		//draw mesh
