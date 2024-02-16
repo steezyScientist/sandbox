@@ -1,4 +1,6 @@
 #define GLEW_STATIC
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -8,6 +10,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp> 
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
 #include <chrono>
 
 #include "Shader.h"
@@ -57,6 +60,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
+void printCamPosition() {
+    glm::vec3 test = gCamera.getPosition();
+    std::cout << glm::to_string(test) << std::endl;
+}
+
 void Input() {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
@@ -67,15 +75,27 @@ void Input() {
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         gCamera.MoveForard(speed);
+        //printCamPosition();
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         gCamera.MoveBackward(speed);
+        //printCamPosition();
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         gCamera.MoveLeft(speed);
+        //printCamPosition();
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         gCamera.MoveRight(speed);
+        //printCamPosition();
+    }
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+        gCamera.MoveUp(speed);
+        //printCamPosition();
+    }
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+        gCamera.MoveDown(speed);
+        //printCamPosition();
     }
 
 }
@@ -121,7 +141,7 @@ void Initialize() {
 void MainLoop() {
 
     Shader shader("vertex.shader", "fragment.shader");;
-    Model myModel("models/nanosuit.obj");
+    Model myModel("models/FPS_002.obj");
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
 
@@ -146,7 +166,7 @@ void MainLoop() {
         shader.setMat4("view", view);
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
+        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
         //model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
         shader.setMat4("model", model);
         myModel.Draw(shader);
@@ -174,3 +194,5 @@ int main()
     CleanUp();
     return 0;
 }
+
+

@@ -28,7 +28,13 @@ void Camera::MouseLook(double mouseX, double mouseY) {
 
 	glm::vec2 mouseDelta = OldMousePosition - currentMouse;
 
+	//horizontal rotation (YAW)
 	mViewDirection = glm::rotate(mViewDirection, glm::radians(mouseDelta.x), mUpVector);
+
+	// Vertical rotation (PITCH) around the right vector
+	glm::vec3 rightVector = glm::cross(mUpVector, mViewDirection);
+	mViewDirection = glm::rotate(mViewDirection, glm::radians(mouseDelta.y), -rightVector);
+
 	OldMousePosition = currentMouse;
 }
 
@@ -45,4 +51,10 @@ void Camera::MoveLeft(float speed) {
 void Camera::MoveRight(float speed) {
 	glm::vec3 rightVector = glm::cross(mViewDirection, mUpVector);
 	mEye += rightVector * speed;
+}
+void Camera::MoveUp(float speed) {
+	mEye.y += speed * 2.0f;
+}
+void Camera::MoveDown(float speed) {
+	mEye.y -= speed * 2.0f;
 }
