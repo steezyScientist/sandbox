@@ -16,6 +16,7 @@
 #include "Shader.h"
 #include "Camera.hpp"
 #include "Model.h"
+#include "Grid.h"
 
 
 
@@ -35,7 +36,7 @@ float sens = 0.1;
 
 //PROCESS INPUTS
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-    std::cout << "x:" << xpos << " y:" << ypos << std::endl;
+    //std::cout << "x:" << xpos << " y:" << ypos << std::endl;
 
     float xPos = xpos * sens;
     float yPos = ypos * sens;
@@ -59,10 +60,29 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
     }
 }
+void showFPS(GLFWwindow* window){
+    static double previousSeconds = 0.0;
+    static int frameCount = 0;
+    double elapsedSeconds;
+    double currentSeconds = glfwGetTime();
 
-void printCamPosition() {
-    glm::vec3 test = gCamera.getPosition();
-    std::cout << glm::to_string(test) << std::endl;
+    elapsedSeconds = currentSeconds - previousSeconds;
+
+    if (elapsedSeconds > 0.25) {
+        previousSeconds = currentSeconds;
+        double fps = (double)frameCount / elapsedSeconds;
+        double msPerFrame = 1000.0 / fps;
+
+        std::ostringstream outs;
+        outs.precision(3);
+        outs << std::fixed
+            << windowTitle << " "
+            << "FPS: " << fps << " "
+            << "Frame_Time: " << msPerFrame << " (ms)";
+        glfwSetWindowTitle(window, outs.str().c_str());
+        frameCount = 0;
+    }
+    frameCount++;
 }
 
 void Input() {
@@ -99,7 +119,6 @@ void Input() {
     }
 
 }
-
 
 void GetOpenGLVersionInfo() {
     std::cout << "Vendor: " << glGetString(GL_VENDOR) << std::endl;
@@ -140,15 +159,18 @@ void Initialize() {
 
 void MainLoop() {
 
-    Shader shader("vertex.shader", "fragment.shader");;
-    Model myModel("models/FPS_002.obj");
+    Shader shader("lightvert.shader", "lightfrag.shader");
+    Grid grid(shader);
+    Model myModel("models/nanosuit.obj");
+
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
 
     while (!glfwWindowShouldClose(window))
     {
-
+        showFPS(window);
         Input();
+
 
         //////PRE-DRAW
         glViewport(0, 0, windowWidth, windowHeight);
@@ -157,18 +179,32 @@ void MainLoop() {
         glEnable(GL_DEPTH_TEST);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
+        grid.Draw();
+
+        //set the params.
+        glm::mat4 model(1.0), view(1.0);
+        view = gCamera.GetViewMatrix();
+
         ///////DRAW
         //use shader
         //draw transformations
         shader.Use();
-        shader.setMat4("projection", projection);
-        glm::mat4 view = gCamera.GetViewMatrix();
+        shader.setMat4("model", glm::mat4(1.0));
         shader.setMat4("view", view);
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
-        //model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+        shader.setMat4("projection", projection);
+        shader.setVec3("viewPos", gCamera.getPosition());
+        shader.setVec3("lightPos", glm::vec3(2.0f, 3.0f, 2.0f));
+        shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+        model = glm::scale(glm::vec3(0.2f));
         shader.setMat4("model", model);
+
+        //light.Use();
+        //light.setMat4("model", glm::mat4(1.0));
+        //light.setMat4("view", view);
+        //light.setMat4("projection", projection);
+        //light.setVec3("viewPos", glm::vec3(0.0f, 0.0f, 0.0f));
+
+        
         myModel.Draw(shader);
 
 
