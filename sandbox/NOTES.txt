@@ -1,0 +1,17 @@
+-Scene
+--Lights
+--Events
+--Physics
+--COllisions
+--GameObjects
+---Camera
+---Player
+---Level stuff
+
+
+
+UI
+AI
+Scene manager
+Rendering system
+input system

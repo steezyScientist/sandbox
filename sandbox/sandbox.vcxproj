@@ -138,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="colors.txt" />
+    <Text Include="NOTES.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment.shader" />
@@ -153,7 +154,6 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="Point.hpp" />
     <ClInclude Include="Shader.h" />
-    <ClInclude Include="Test.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

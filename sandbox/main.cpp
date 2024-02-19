@@ -166,7 +166,7 @@ void MainLoop() {
     Point myPoint(shader, glm::vec3(0.0f), glm::vec3(1.0f, 0.0f, 1.0f), 10.f); //shader, position, color, thickness
     Line myLine(shader, glm::vec3(0.0f),glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(1.0f, 0.0f, 1.0f), 0.05f);
     Line myLine2(shader, glm::vec3(0.0f),glm::vec3(5.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 1.0f), 0.05f);
-    Line myLine3(shader, glm::vec3(0.0f),glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(1.0f, 0.0f, 1.0f), 0.05f); //y why
+    Line myLine3(shader, glm::vec3(0.0f),glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(1.0f, 0.0f, 1.0f), 0.05f); //y why
     Model myModel("models/nanosuit.obj");
     
 

@@ -24,6 +24,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="colors.txt" />
+    <Text Include="NOTES.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="vertex.shader" />
@@ -42,9 +43,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Test.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Grid.h">
