@@ -168,7 +168,7 @@ void MainLoop() {
     Line myLine(shader, glm::vec3(0.0f),glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(1.0f, 0.0f, 1.0f), 0.05f);
     Line myLine2(shader, glm::vec3(0.0f),glm::vec3(5.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 1.0f), 0.05f);
     Line myLine3(shader, glm::vec3(0.0f),glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(1.0f, 0.0f, 1.0f), 0.05f); //y why
-    Model myModel("models/nanosuit.obj");
+    Model myModel("models/Wood_Chair.obj");
     
     
     
@@ -211,7 +211,8 @@ void MainLoop() {
         shader.setVec3("viewPos", gCamera.getPosition());
         shader.setVec3("lightPos", glm::vec3(2.0f, 3.0f, 2.0f));
         shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-        model = glm::scale(glm::vec3(0.075f));
+        model = glm::scale(glm::vec3(2.0f));
+        model = glm::rotate(glm::radians(currentTimeFrame * 20), glm::vec3(0.0f, 1.0f, 0.0f));
         shader.setMat4("model", model);
 
         //light.Use();
@@ -222,9 +223,9 @@ void MainLoop() {
 
         
         myModel.Draw(shader);
-        myLine.Draw();
-        myLine2.Draw();
-        myLine3.Draw();
+        //myLine.Draw();
+        //myLine2.Draw();
+        //myLine3.Draw();
         //myPoint.Draw();
 
 
