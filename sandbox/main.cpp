@@ -31,9 +31,10 @@ GLFWwindow* window = nullptr;
 bool polyMode = false;
 
 Camera gCamera;
+float lastFrameTime = 0.0f;
+float deltaTime = 0.0f;
 
-
-float speed = 0.001;
+float speed = 1000;
 float sens = 0.1;
 
 //PROCESS INPUTS
@@ -96,27 +97,27 @@ void Input() {
     glfwSetKeyCallback(window, key_callback);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        gCamera.MoveForward(speed);
+        gCamera.MoveForward(deltaTime);
         //printCamPosition();
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        gCamera.MoveBackward(speed);
+        gCamera.MoveBackward(deltaTime);
         //printCamPosition();
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        gCamera.MoveLeft(speed);
+        gCamera.MoveLeft(deltaTime);
         //printCamPosition();
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        gCamera.MoveRight(speed);
+        gCamera.MoveRight(deltaTime);
         //printCamPosition();
     }
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-        gCamera.MoveUp(speed);
+        gCamera.MoveUp(deltaTime);
         //printCamPosition();
     }
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-        gCamera.MoveDown(speed);
+        gCamera.MoveDown(deltaTime);
         //printCamPosition();
     }
 
@@ -166,15 +167,23 @@ void MainLoop() {
     Point myPoint(shader, glm::vec3(0.0f), glm::vec3(1.0f, 0.0f, 1.0f), 10.f); //shader, position, color, thickness
     Line myLine(shader, glm::vec3(0.0f),glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(1.0f, 0.0f, 1.0f), 0.05f);
     Line myLine2(shader, glm::vec3(0.0f),glm::vec3(5.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 1.0f), 0.05f);
-    Line myLine3(shader, glm::vec3(0.0f),glm::vec3(0.0f, 5.0f, 0.0f), glm::vec3(1.0f, 0.0f, 1.0f), 0.05f); //y why
+    Line myLine3(shader, glm::vec3(0.0f),glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(1.0f, 0.0f, 1.0f), 0.05f); //y why
     Model myModel("models/nanosuit.obj");
     
+    
+    
+
 
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
 
     while (!glfwWindowShouldClose(window))
     {
+        float currentTimeFrame = glfwGetTime();
+        deltaTime = (currentTimeFrame - lastFrameTime);
+        lastFrameTime = currentTimeFrame;
+      
+        
         showFPS(window);
         Input();
 
