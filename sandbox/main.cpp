@@ -17,6 +17,8 @@
 #include "Camera.hpp"
 #include "Model.h"
 #include "Grid.h"
+#include "Point.hpp"
+#include "Line.h"
 
 
 
@@ -94,7 +96,7 @@ void Input() {
     glfwSetKeyCallback(window, key_callback);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        gCamera.MoveForard(speed);
+        gCamera.MoveForward(speed);
         //printCamPosition();
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
@@ -160,8 +162,13 @@ void Initialize() {
 void MainLoop() {
 
     Shader shader("lightvert.shader", "lightfrag.shader");
-    Grid grid(shader);
+    //Grid grid(shader);
+    Point myPoint(shader, glm::vec3(0.0f), glm::vec3(1.0f, 0.0f, 1.0f), 10.f); //shader, position, color, thickness
+    Line myLine(shader, glm::vec3(0.0f),glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(1.0f, 0.0f, 1.0f), 0.05f);
+    Line myLine2(shader, glm::vec3(0.0f),glm::vec3(5.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 1.0f), 0.05f);
+    Line myLine3(shader, glm::vec3(0.0f),glm::vec3(0.0f, -5.0f, 0.0f), glm::vec3(1.0f, 0.0f, 1.0f), 0.05f); //y why
     Model myModel("models/nanosuit.obj");
+    
 
 
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)windowWidth / (float)windowHeight, 0.1f, 10.0f);
@@ -179,7 +186,7 @@ void MainLoop() {
         glEnable(GL_DEPTH_TEST);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-        grid.Draw();
+        //grid.Draw();
 
         //set the params.
         glm::mat4 model(1.0), view(1.0);
@@ -195,7 +202,7 @@ void MainLoop() {
         shader.setVec3("viewPos", gCamera.getPosition());
         shader.setVec3("lightPos", glm::vec3(2.0f, 3.0f, 2.0f));
         shader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-        model = glm::scale(glm::vec3(0.2f));
+        model = glm::scale(glm::vec3(0.075f));
         shader.setMat4("model", model);
 
         //light.Use();
@@ -206,7 +213,10 @@ void MainLoop() {
 
         
         myModel.Draw(shader);
-
+        myLine.Draw();
+        myLine2.Draw();
+        myLine3.Draw();
+        //myPoint.Draw();
 
 
         //glUseProgram(0);

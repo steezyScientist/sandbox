@@ -1,7 +1,7 @@
 #include "Camera.hpp"
 
 Camera::Camera() {
-	mEye = glm::vec3(0.0f, 0.0f, 3.0f);
+	mEye = glm::vec3(0.0f, 1.0f, 3.0f);
 	mViewDirection = glm::vec3(0.0f, 0.0f, -3.0f);
 	mUpVector = glm::vec3(0.0f, 1.0f, 0.0f);
 }
@@ -38,19 +38,23 @@ void Camera::MouseLook(double mouseX, double mouseY) {
 	OldMousePosition = currentMouse;
 }
 
-void Camera::MoveForard(float speed) {
+void Camera::MoveForward(float speed) {
 	mEye += (speed * mViewDirection);
+	mEye.y = 1.0f;
 }
 void Camera::MoveBackward(float speed) {
 	mEye -= (speed * mViewDirection);
+	mEye.y = 1.0f;
 }
 void Camera::MoveLeft(float speed) {
 	glm::vec3 rightVector = glm::cross(mViewDirection, mUpVector);
 	mEye -= rightVector * speed;
+	mEye.y = 1.0f;
 }
 void Camera::MoveRight(float speed) {
 	glm::vec3 rightVector = glm::cross(mViewDirection, mUpVector);
 	mEye += rightVector * speed;
+	mEye.y = 1.0f;
 }
 void Camera::MoveUp(float speed) {
 	mEye.y += speed * 2.0f;

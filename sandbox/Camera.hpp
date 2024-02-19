@@ -17,7 +17,7 @@ public:
 	glm::vec3 getPosition();
 
 	void MouseLook(double mouseX, double mouseY);
-	void MoveForard(float speed);
+	void MoveForward(float speed);
 	void MoveBackward(float speed);
 	void MoveLeft(float speed);
 	void MoveRight(float speed);
@@ -28,6 +28,7 @@ private:
 	glm::vec3 mEye;
 	glm::vec3 mViewDirection;
 	glm::vec3 mUpVector;
+	glm::vec3 mRightVector;
 
 };
 
